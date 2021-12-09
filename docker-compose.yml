@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  db:
+      image: postgres:14.1
+      ports:
+        - "5432:5432"
+      environment:
+        POSTGRES_PASSWORD: pass
+      volumes: 
+          # copy the sql script to create tables
+        - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  app: 
+      build: .
+      ports:
+        - "8080:8080"
+      environment:
+        POSTGRES_PASSWORD: pass
+        PALINDROME_DB: postgres://postgres:pass@db:5432/postgres
+      depends_on:
+      - "db"
+      networks:
+      - default
